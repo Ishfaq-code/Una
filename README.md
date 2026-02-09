@@ -1,2 +1,2 @@
-# Uno - Centralized Club Management
+# Una - Centralized Club Management
 Work in progress
