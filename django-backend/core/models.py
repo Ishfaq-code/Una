@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Use this as the manager for creating users and super users
     objects = UserManager()
 
-    USERNAME_FILED = "email"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list[str] = ["first_name", "last_name"]
 
     def __str__(self):
