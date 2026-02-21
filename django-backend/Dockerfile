@@ -13,7 +13,8 @@ COPY requirements.txt .
 RUN uv pip install -r requirements.txt --system
 
 COPY . .
+RUN chmod +x ./scripts/entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["./scripts/entrypoint.sh"]
+CMD ["sh", "./scripts/entrypoint.sh"]
