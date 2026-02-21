@@ -9,11 +9,11 @@ RUN apt-get update && apt-get install -y curl
 
 COPY --from=ghcr.io/astral-sh/uv:0.10.2 /uv /uvx /bin/
 
-COPY django-backend/requirements.txt .
+COPY requirements.txt .
 RUN uv pip install -r requirements.txt --system
 
-COPY django-backend .
+COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./scripts/entrypoint.sh"]

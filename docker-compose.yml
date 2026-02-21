@@ -2,7 +2,7 @@ services:
   web:
     env_file:
       - .env
-    build: .
+    build: ./django-backend
     container_name: django_app
     ports: 
       - 8000:8000
