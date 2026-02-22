@@ -1,5 +1,5 @@
 services:
-  web:
+  backend:
     env_file:
       - .env
     build: ./django-backend
