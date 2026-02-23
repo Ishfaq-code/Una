@@ -28,7 +28,16 @@ services:
       retries: 5
       start_period: 30s
 
-
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: una-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 
 
