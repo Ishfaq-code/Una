@@ -4,7 +4,7 @@ from api.utils.code_generation_util import generate_institution_code
 from django.db import IntegrityError, transaction
 
 
-class InstitutionSerializer(serializers.Serializer):
+class InstitutionSerializer(serializers.ModelSerializer):
     user_first_name = serializers.CharField(source="user.first_name", read_only=True)
     user_last_name = serializers.CharField(source="user.last_name", read_only=True)
 
