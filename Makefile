@@ -17,4 +17,7 @@ start-build:
 migrate:
 	docker exec django_app python manage.py makemigrations
 
-.PHONY: all start stop restart build start-build migrate
+create-super-user:
+	docker exec -it django_app python manage.py createsuperuser
+
+.PHONY: all start stop restart build start-build migrate create-super-user
