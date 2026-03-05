@@ -39,6 +39,7 @@ class Memberships(models.Model):
 
 class OrganizationCode(models.Model):
     code = models.CharField(max_length=6)
+    organization_id = models.ForeignKey(Organizations, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=True)
 
