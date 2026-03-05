@@ -9,7 +9,6 @@ class Organizations(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
-    code_hash = models.CharField(max_length=6)
     owner = models.ForeignKey(Member, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
     institution_id = models.OneToOneField(InstitutionId, on_delete=models.CASCADE,  null=True, blank=True,)
 
@@ -37,3 +36,10 @@ class Memberships(models.Model):
     
     def __str__(self):
         return f"{self.member} in {self.club} ({self.role}/{self.status})"
+
+class OrganizationCode(models.Model):
+    code = models.CharField(max_length=6)
+    organization_id = models.ForeignKey(Organizations, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    active = models.BooleanField(default=True)
+
