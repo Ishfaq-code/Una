@@ -1,17 +1,30 @@
+from django.db import IntegrityError, transaction
 from rest_framework import serializers
+
 from api.models.institution import InstitutionId
 from api.utils.code_generation_util import generate_institution_code
-from django.db import IntegrityError, transaction
 
 
 class InstitutionSerializer(serializers.ModelSerializer):
-    user_first_name = serializers.CharField(source="user.first_name", read_only=True)
-    user_last_name = serializers.CharField(source="user.last_name", read_only=True)
+    user_first_name = serializers.SerializerMethodField()
+    user_last_name = serializers.SerializerMethodField()
 
     class Meta:
         model = InstitutionId
-        fields = ['id','code','created_at','user_first_name','user_last_name']
+        fields = ['id', 'code', 'created_at', 'user_first_name', 'user_last_name']
         read_only_fields = fields
+
+    def get_user_first_name(self, obj):
+        member = getattr(obj.user, 'member', None)
+        if member is not None:
+            return member.first_name
+        return obj.user.first_name
+
+    def get_user_last_name(self, obj):
+        member = getattr(obj.user, 'member', None)
+        if member is not None:
+            return member.last_name
+        return obj.user.last_name
 
     def create(self, validated_data):
         user = self.context["request"].user
