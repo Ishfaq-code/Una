@@ -59,3 +59,17 @@ class SignupDomainRestrictionTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('first_name', response.data)
         self.assertIn('last_name', response.data)
+
+
+class AuthRoutingTests(APITestCase):
+    def test_jwt_create_endpoint_is_exposed(self):
+        response = self.client.post('/auth/jwt/create/', {}, format='json')
+        self.assertNotEqual(response.status_code, 404)
+
+    def test_user_me_endpoint_is_exposed(self):
+        response = self.client.get('/auth/users/me/')
+        self.assertNotEqual(response.status_code, 404)
+
+    def test_existing_api_routes_still_exposed(self):
+        response = self.client.get('/institutions/')
+        self.assertNotEqual(response.status_code, 404)
