@@ -35,8 +35,6 @@ ALLOWED_SIGNUP_EMAIL_DOMAINS = [
     if domain.strip()
 ]
 
-print(ALLOWED_SIGNUP_EMAIL_DOMAINS)
-
 
 # Application definition
 
@@ -138,7 +136,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'user_create': 'users.serializers.DomainRestrictedUserCreateSerializer',
-        'user_create_password_retype': 'users.serializers.DomainRestrictedUserCreateSerializer',
+        'user_create_password_retype': 'users.serializers.DomainRestrictedUserCreatePasswordRetypeSerializer',
     },
 }
 

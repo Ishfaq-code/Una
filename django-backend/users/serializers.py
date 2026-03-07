@@ -1,19 +1,23 @@
 from django.conf import settings
-from djoser.serializers import UserCreateSerializer
+from django.db import transaction
+from djoser.serializers import UserCreatePasswordRetypeSerializer, UserCreateSerializer
 from rest_framework import serializers
 
+from api.models.accounts import Member
 
-class DomainRestrictedUserCreateSerializer(UserCreateSerializer):
+
+class DomainRestrictedSignupMixin(serializers.Serializer):
+    first_name = serializers.CharField(max_length=150, write_only=True)
+    last_name = serializers.CharField(max_length=150, write_only=True)
+
     def validate_email(self, value):
         email = value.strip().lower()
         parts = email.rsplit('@', 1)
 
-        print("Running")
         if len(parts) != 2:
             raise serializers.ValidationError('Enter a valid email address.')
 
         allowed_domains = settings.ALLOWED_SIGNUP_EMAIL_DOMAINS
-        print(allowed_domains)
         if not allowed_domains:
             raise serializers.ValidationError('Signup is disabled. No email domains are configured.')
 
@@ -25,3 +29,26 @@ class DomainRestrictedUserCreateSerializer(UserCreateSerializer):
             )
 
         return email
+
+    def create(self, validated_data):
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+
+        with transaction.atomic():
+            user = super().create(validated_data)
+            Member.objects.create(user=user, first_name=first_name, last_name=last_name)
+
+        return user
+
+
+class DomainRestrictedUserCreateSerializer(DomainRestrictedSignupMixin, UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        fields = tuple(UserCreateSerializer.Meta.fields) + ('first_name', 'last_name')
+
+
+class DomainRestrictedUserCreatePasswordRetypeSerializer(
+    DomainRestrictedSignupMixin,
+    UserCreatePasswordRetypeSerializer,
+):
+    class Meta(UserCreatePasswordRetypeSerializer.Meta):
+        fields = tuple(UserCreatePasswordRetypeSerializer.Meta.fields) + ('first_name', 'last_name')
