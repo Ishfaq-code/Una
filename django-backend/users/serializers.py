@@ -36,6 +36,9 @@ class DomainRestrictedSignupMixin(serializers.Serializer):
 
         with transaction.atomic():
             user = super().create(validated_data)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save(update_fields=['first_name', 'last_name'])
             Member.objects.create(user=user, first_name=first_name, last_name=last_name)
 
         return user

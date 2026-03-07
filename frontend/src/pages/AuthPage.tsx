@@ -19,6 +19,58 @@ interface SignupFormState {
   last_name: string
 }
 
+function isLikelyEmail(value: string): boolean {
+  return /^\S+@\S+\.\S+$/.test(value)
+}
+
+function validateLoginForm(values: LoginFormState): Record<string, string> {
+  const errors: Record<string, string> = {}
+
+  if (!values.email.trim()) {
+    errors.email = 'Email is required.'
+  } else if (!isLikelyEmail(values.email.trim())) {
+    errors.email = 'Enter a valid email address.'
+  }
+
+  if (!values.password) {
+    errors.password = 'Password is required.'
+  }
+
+  return errors
+}
+
+function validateSignupForm(values: SignupFormState): Record<string, string> {
+  const errors: Record<string, string> = {}
+
+  if (!values.first_name.trim()) {
+    errors.first_name = 'First name is required.'
+  }
+
+  if (!values.last_name.trim()) {
+    errors.last_name = 'Last name is required.'
+  }
+
+  if (!values.email.trim()) {
+    errors.email = 'Email is required.'
+  } else if (!isLikelyEmail(values.email.trim())) {
+    errors.email = 'Enter a valid email address.'
+  }
+
+  if (!values.password) {
+    errors.password = 'Password is required.'
+  }
+
+  if (!values.re_password) {
+    errors.re_password = 'Please confirm your password.'
+  }
+
+  if (values.password && values.re_password && values.password !== values.re_password) {
+    errors.re_password = 'Passwords do not match.'
+  }
+
+  return errors
+}
+
 function isApiError(error: unknown): error is ApiError {
   return (
     typeof error === 'object' &&
@@ -78,13 +130,24 @@ export function AuthPage() {
     setFieldErrors({})
   }
 
-  const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     clearErrors()
+
+    const errors = validateLoginForm(loginForm)
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      setGlobalError('Please correct the highlighted fields.')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
-      await login(loginForm)
+      await login({
+        email: loginForm.email.trim().toLowerCase(),
+        password: loginForm.password,
+      })
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setErrorState(error)
@@ -93,20 +156,27 @@ export function AuthPage() {
     }
   }
 
-  const handleSignupSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSignupSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     clearErrors()
 
-    if (signupForm.password !== signupForm.re_password) {
-      setGlobalError('Passwords do not match.')
-      setFieldErrors({ re_password: 'Passwords do not match.' })
+    const errors = validateSignupForm(signupForm)
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      setGlobalError('Please correct the highlighted fields.')
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      await signup(signupForm)
+      await signup({
+        email: signupForm.email.trim().toLowerCase(),
+        password: signupForm.password,
+        re_password: signupForm.re_password,
+        first_name: signupForm.first_name.trim(),
+        last_name: signupForm.last_name.trim(),
+      })
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setErrorState(error)

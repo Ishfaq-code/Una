@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate } from 'react-router'
 import type { ReactNode } from 'react'
 
@@ -8,7 +9,13 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isBootstrapping } = useAuth()
+  const { accessToken, refreshToken, isAuthenticated, isBootstrapping, logout } = useAuth()
+
+  useEffect(() => {
+    if (!isBootstrapping && !isAuthenticated && (accessToken || refreshToken)) {
+      logout()
+    }
+  }, [accessToken, isAuthenticated, isBootstrapping, logout, refreshToken])
 
   if (isBootstrapping) {
     return <div className="app-loading">Loading session...</div>

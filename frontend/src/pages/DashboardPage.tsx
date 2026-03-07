@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 
 import { useAuth } from '../context/useAuth'
@@ -11,11 +12,24 @@ export function DashboardPage() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
+  console.log(user)
+
   const displayName = resolveDisplayName(user?.first_name, user?.last_name)
+
+  useEffect(() => {
+    if (!user) {
+      logout()
+      navigate('/auth', { replace: true })
+    }
+  }, [logout, navigate, user])
 
   const handleLogout = () => {
     logout()
     navigate('/auth', { replace: true })
+  }
+
+  if (!user) {
+    return <main className="screen shell"><div className="app-loading">Redirecting to sign in...</div></main>
   }
 
   return (
@@ -25,7 +39,7 @@ export function DashboardPage() {
         <p className="subtitle">Welcome back.</p>
 
         <div className="user-card">
-          <span className="label">Name</span>
+          <span className="label">Member</span>
           <strong>{displayName || user?.email || 'Unknown User'}</strong>
         </div>
 
