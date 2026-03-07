@@ -29,6 +29,14 @@ DEBUG = env.bool('DJANGO_DEBUG', default=True)
 
 ALLOWED_HOSTS = ["*"]
 
+ALLOWED_SIGNUP_EMAIL_DOMAINS = [
+    domain.strip().lower().lstrip('@')
+    for domain in env.list('ALLOWED_SIGNUP_EMAIL_DOMAINS', default=[])
+    if domain.strip()
+]
+
+print(ALLOWED_SIGNUP_EMAIL_DOMAINS)
+
 
 # Application definition
 
@@ -128,6 +136,10 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.DomainRestrictedUserCreateSerializer',
+        'user_create_password_retype': 'users.serializers.DomainRestrictedUserCreateSerializer',
+    },
 }
 
 
