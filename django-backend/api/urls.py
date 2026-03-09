@@ -3,5 +3,6 @@ from api.views.institution_views import InstitutionIdCreateView, GetLatestInstit
 
 urlpatterns = [
     path("institutions/", InstitutionIdCreateView.as_view(), name="institutionid-create"),
-    path("institutions/latest/", GetLatestInstitution.as_view(), name="institutionid-latest")
+    path("institutions/latest/", GetLatestInstitution.as_view(), name="institutionid-latest"),
+    path("organizations/join/", JoinOrganizationView.as_view(), name="join-organization")
 ]
