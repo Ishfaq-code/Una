@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models.institution import InstitutionId
+from api.models.institution import InstitutionCode
 from api.utils.code_generation_util import generate_institution_code
 from django.db import IntegrityError, transaction
 
@@ -9,7 +9,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
     user_last_name = serializers.CharField(source="user.last_name", read_only=True)
 
     class Meta:
-        model = InstitutionId
+        model = InstitutionCode
         fields = ['id','code','created_at','user_first_name','user_last_name']
         read_only_fields = fields
 
@@ -18,7 +18,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
         code = generate_institution_code()
         try:
             with transaction.atomic():
-                return InstitutionId.objects.create(
+                return InstitutionCode.objects.create(
                     user=user,
                     used=False,
                     code=code,

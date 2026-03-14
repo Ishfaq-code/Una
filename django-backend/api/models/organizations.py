@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from .institution import InstitutionId
+from .institution import InstitutionCode
  
 class Organizations(models.Model):
     name = models.CharField(max_length=255)
@@ -9,7 +9,7 @@ class Organizations(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey(User, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
-    institution_id = models.OneToOneField(InstitutionId, on_delete=models.CASCADE,  null=True, blank=True,)
+    institution_code = models.OneToOneField(InstitutionCode, on_delete=models.CASCADE,  null=True, blank=True,)
 
 class Memberships(models.Model):
     class ClubRole(models.TextChoices):
