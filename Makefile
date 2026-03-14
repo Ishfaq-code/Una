@@ -45,6 +45,15 @@ stop-backend:
 	@echo "Stopping Una backend"
 	@$(DOCKER_COMPOSE) stop db backend
 
-.PHONY: help
+create-superuser:
+	docker exec -it django_app python manage.py createsuperuser
+
+migrate:
+	docker exec django_app python manage.py makemigrations
+
+runmigrations:
+	docker exec django_app python manage.py migrate
+
+.PHONY: help create-superuser migrate runmigrations
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
