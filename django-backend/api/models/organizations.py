@@ -1,16 +1,15 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from .accounts import Member
-from .institution import InstitutionId
+from .institution import InstitutionCode
  
 class Organizations(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
-    owner = models.ForeignKey(Member, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
-    institution_id = models.OneToOneField(InstitutionId, on_delete=models.CASCADE,  null=True, blank=True,)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
+    institution_code = models.OneToOneField(InstitutionCode, on_delete=models.CASCADE,  null=True, blank=True,)
 
 class Memberships(models.Model):
     class ClubRole(models.TextChoices):
@@ -20,7 +19,7 @@ class Memberships(models.Model):
         ACTIVE = 1, "Active"
         INACTIVE = 0, "Inactive"
     
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organizations, on_delete=models.CASCADE)
     status = models.IntegerField(choices=Status.choices, default=Status.ACTIVE)
     role = models.CharField(max_length=16, choices=ClubRole.choices, default=ClubRole.MEMBER)
@@ -36,10 +35,3 @@ class Memberships(models.Model):
     
     def __str__(self):
         return f"{self.member} in {self.club} ({self.role}/{self.status})"
-
-class OrganizationCode(models.Model):
-    code = models.CharField(max_length=6)
-    organization_id = models.ForeignKey(Organizations, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
-    active = models.BooleanField(default=True)
-
