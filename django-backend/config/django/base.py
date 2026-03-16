@@ -27,6 +27,11 @@ DEBUG = env.bool('DJANGO_DEBUG', default=True)
 
 ALLOWED_HOSTS = ["*"]
 
+EMAIL_DOMAINS = [
+    domain.strip().lower()
+    for domain in env("EMAIL_DOMAINS", default=".edu").split(",")
+    if domain.strip()
+]
 
 # Application definition
 
