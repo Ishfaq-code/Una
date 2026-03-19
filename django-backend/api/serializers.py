@@ -59,7 +59,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
                 OrganizationCode.objects.create(
                     code=org_code,
-                    organization=organization
+                    organization_id=organization.pk
                 )
 
                 Memberships.objects.create(
@@ -72,7 +72,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
                 return Memberships.objects.filter(member=owner)
 
         except IntegrityError:
-            raise IntegrityError('Failed creating a new organization, try again!')
+            raise serializers.ValidationError('Failed creating a new organization, try again!')
         except InstitutionId.DoesNotExist:
-            raise serializers.ValidationError('Instituon code is invalid, try again!')
+            raise serializers.ValidationError('Institution code is invalid, try again!')
            
