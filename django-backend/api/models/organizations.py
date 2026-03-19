@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.conf import settings
 from .institution import InstitutionCode
  
 class Organizations(models.Model):
@@ -8,7 +8,7 @@ class Organizations(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
-    owner = models.ForeignKey(User, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT) # Avoid losing data persistance if something happens to an account
     institution_code = models.OneToOneField(InstitutionCode, on_delete=models.CASCADE,  null=True, blank=True,)
 
 class Memberships(models.Model):
@@ -19,7 +19,7 @@ class Memberships(models.Model):
         ACTIVE = 1, "Active"
         INACTIVE = 0, "Inactive"
     
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organizations, on_delete=models.CASCADE)
     status = models.IntegerField(choices=Status.choices, default=Status.ACTIVE)
     role = models.CharField(max_length=16, choices=ClubRole.choices, default=ClubRole.MEMBER)
