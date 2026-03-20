@@ -2,13 +2,14 @@ from rest_framework import serializers
 from .models import CustomUser
 from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db import IntegrityError
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'first_name', 'last_name']
 
-class LoginUserSerializer(serializers.ModelSerializer):
+class LoginUserSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
 
@@ -20,7 +21,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta: 
-        model = User
+        model = CustomUser
         fields = ['id', 'email', 'password', 'first_name', 'last_name']
         extra_kwargs = {
             'password': {'write_only': True}
@@ -37,7 +38,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         try:
-            user = User.objects.create_user(**validated_data)
+            user = CustomUser.objects.create_user(**validated_data)
             return user
         except IntegrityError:
             raise serializers.ValidationError({"email": "Email already exists."})
