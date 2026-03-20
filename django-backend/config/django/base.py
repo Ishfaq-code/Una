@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
 from config.env import BASE_DIR, env
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -26,6 +27,12 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DJANGO_DEBUG', default=True)
 
 ALLOWED_HOSTS = ["*"]
+
+EMAIL_DOMAINS = [
+    domain.strip().lower()
+    for domain in env("EMAIL_DOMAINS", default=".edu").split(",")
+    if domain.strip()
+]
 
 
 # Application definition
@@ -119,6 +126,21 @@ USE_I18N = True
 
 USE_TZ = True
 
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+    
+        'users.authentication.CookieJWTAuthentication',
+    )
+
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=0.2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
