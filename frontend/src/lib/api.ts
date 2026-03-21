@@ -8,8 +8,20 @@ const ENDPOINTS = {
   USER_REFRESH: '/api/users/refresh/',
 }
 
+export const me = async () => {
+  const URL = `${API_BASE_URL}${ENDPOINTS.USER_ME}`
+  return fetch(URL, {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 export const register = async (email: string, password: string, first_name: string, last_name: string) => {
-  const URL = `${API_BASE_URL}${ENDPOINTS.USER_LOGIN}`
+  const URL = `${API_BASE_URL}${ENDPOINTS.USER_REGISTER}`
   return fetch(URL, {
     method: 'POST',
     cache: 'no-cache',
